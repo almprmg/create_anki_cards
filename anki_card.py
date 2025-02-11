@@ -16,3 +16,14 @@ class AnkiCard:
         
         missing_words = [word for word in  df_text[column_2] if word not in  self.card_file[column_1].values]
         return missing_words
+    
+    def create_card(self):
+        card_df =self.card_file.copy()
+        
+        card_df["Back"] = '<div style="text-align: center;"><b>'+ card_df["English Word"]   + "</b></div> " + '<div style="text-align: center;"><b>' +card_df["Arabic Translation"] + "</b></div> "+ """<div style="text-align: center;"><b><br></b></div><div style="text-align: center;"><span style="text-align: start;">
+                """ + card_df["Example Sentence"] + '</span><b><br></b></div>'
+        card_df["English Word"]  = '<div style="text-align: center;"><b>'+ card_df["English Word"]   + "</b></div> "
+        columns_drop = [column  for column in card_df if (column in  ["English Word","Back"] ) ]
+        card_df.drop(columns_drop,axis= 1,inplace = True)
+
+        return card_df
