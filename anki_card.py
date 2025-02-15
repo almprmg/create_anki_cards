@@ -1,4 +1,7 @@
 import pandas as pd
+from dotenv import load_dotenv
+from elevenlabs.client import ElevenLabs
+
 import re
 
 
@@ -27,3 +30,12 @@ class AnkiCard:
         card_df.drop(columns_drop,axis= 1,inplace = True)
 
         return card_df
+    
+
+class TextToSpeech:
+
+    def __init__(self):
+        
+        load_dotenv()
+        
+        self.__client = ElevenLabs()
