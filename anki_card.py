@@ -1,6 +1,7 @@
 import pandas as pd
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
+from elevenlabs import  save
 
 import re
 
@@ -39,3 +40,21 @@ class TextToSpeech:
         load_dotenv()
         
         self.__client = ElevenLabs()
+
+
+    def text_to_speech(self, text, output_file="output.mp3"):
+
+
+ 
+
+ 
+        audio =  self.__client.text_to_speech.convert(
+            text= text,voice_id="21m00Tcm4TlvDq8ikWAM",
+
+                model_id="eleven_multilingual_v2",
+
+        )
+
+ 
+        save(audio,output_file)
+ 
