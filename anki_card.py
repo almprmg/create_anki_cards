@@ -1,5 +1,6 @@
 import pandas as pd
 from dotenv import load_dotenv
+import genanki
 from elevenlabs.client import ElevenLabs
 from elevenlabs import  save
 
@@ -7,10 +8,33 @@ import re
 
 
 
+
+
 class AnkiCard:
-    def __init__(self,path_word_file):
+    def __init__(self,path_word_file,fields , templates,  name ="CSV to Anki Model"):
         self.card_file = self.__read_file(path_word_file)
-    
+
+        if (fields == None  ):
+            fields = [
+                {"name": "Word"},
+                {"name": "Example"},
+                {"name": "Audio"},
+            ],
+        if (templates == None  ):
+            templates = [
+                        {
+                            "name": "Card 1",
+                            "qfmt": "{{Word}}",
+                            "afmt": "{{Answer}} <b><br></b>{{Audio}} <b><br></b>  <b><br></b> {{Example}}",
+                        },
+                        ],
+
+        self.__model = genanki.Model(
+            1607392319,  # معرف فريد عشوائي
+            name ,
+            fields=fields, 
+            templates= templates 
+        )
     def __read_file(self,path_word_file):
         return pd.read_csv(path_word_file,index_col=0)
     def camper_different(self,path_file):
@@ -24,7 +48,7 @@ class AnkiCard:
     def create_card(self):
         card_df =self.card_file.copy()
         
-        card_df["Back"] = '<div style="text-align: center;"><b>'+ card_df["English Word"]   + "</b></div> " + '<div style="text-align: center;"><b>' +card_df["Arabic Translation"] + "</b></div> "+ """<div style="text-align: center;"><b><br></b></div><div style="text-align: center;"><span style="text-align: start;">
+        card_df["Back"] = '<div style="text-align: center;"><b>'+ card_df["English Word"]   + "</b></div> " + '<div style="text-align: center;"><b>' +card_df["Arabic Translation"] + "</b></div> "+ """<div style="text-align: center;">  <b><br></b></div><div style="text-align: center;"><span style="text-align: start;">
                 """ + card_df["Example Sentence"] + '</span><b><br></b></div>'
         card_df["English Word"]  = '<div style="text-align: center;"><b>'+ card_df["English Word"]   + "</b></div> "
         columns_drop = [column  for column in card_df if (column in  ["English Word","Back"] ) ]
@@ -44,10 +68,6 @@ class TextToSpeech:
 
     def text_to_speech(self, text, output_file="output.mp3"):
 
-
- 
-
- 
         audio =  self.__client.text_to_speech.convert(
             text= text,voice_id="21m00Tcm4TlvDq8ikWAM",
 
