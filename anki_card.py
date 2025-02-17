@@ -35,6 +35,7 @@ class AnkiCard:
             fields=fields, 
             templates= templates 
         )
+        self.__deck  = genanki.Deck(2059400110, name)
     def __read_file(self,path_word_file):
         return pd.read_csv(path_word_file,index_col=0)
     def camper_different(self,path_file):
@@ -55,7 +56,9 @@ class AnkiCard:
         card_df.drop(columns_drop,axis= 1,inplace = True)
 
         return card_df
-    
+
+
+
 
 class TextToSpeech:
 
