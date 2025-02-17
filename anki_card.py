@@ -10,6 +10,12 @@ import re
 
 
 
+class TextStyle:
+
+    def b(text):
+
+        return f"<b> text </b>"
+
 class AnkiCard:
     def __init__(self,path_word_file,fields , templates,  name ="CSV to Anki Model"):
         self.card_file = self.__read_file(path_word_file)
@@ -57,8 +63,7 @@ class AnkiCard:
 
         return card_df
 
-
-
+    
 
 class TextToSpeech:
 
