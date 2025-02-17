@@ -11,11 +11,15 @@ import re
 
 
 class TextStyle:
-
+    @staticmethod
     def b(text):
 
-        return f"<b> text </b>"
+        return f"<b> {text} </b>"
+    
+    @staticmethod
+    def center(text):
 
+        return f'<div style="text-align: center;">{text}</div>
 class AnkiCard:
     def __init__(self,path_word_file,fields , templates,  name ="CSV to Anki Model"):
         self.card_file = self.__read_file(path_word_file)
