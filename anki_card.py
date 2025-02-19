@@ -34,6 +34,7 @@ class AnkiCard:
             fields = [
                 {"name": "Word"},
                 {"name": "Example"},
+                {"name": "Answer"},
                 {"name": "Audio"},
             ],
         if (templates == None  ):
