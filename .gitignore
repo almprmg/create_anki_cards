@@ -1,1 +1,3 @@
 .env
+__pycache__/anki_card.cpython-310.pyc
+anki_card_test.ipynb
