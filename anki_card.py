@@ -33,18 +33,29 @@ class AnkiCard:
         if (fields == None  ):
             fields = [
                 {"name": "Word"},
-                {"name": "Example"},
                 {"name": "Answer"},
+                {"name": "Example"},
                 {"name": "Audio"},
             ],
         if (templates == None  ):
-            templates = [
-                        {
-                            "name": "Card 1",
-                            "qfmt": "{{Word}}",
-                            "afmt": "{{Answer}} <b><br></b>{{Audio}} <b><br></b>  <b><br></b> {{Example}}",
+            templates = [{
+                "name": "Card 1",
+                "qfmt": """
+                          <div class="card">
+                            <h2>{{Word}}</h2>
+                          </div>
+                        """ ,
+                "afmt": """
+                          <div class="card"> 
+                            <h2>{{Word}}</h2>
+                            <hr>
+                            <p> {{Answer}}  <br>  <br>  </p>
+                            <p> {{Example}}<br> </p>
+                            {{Audio}} 
+                          </div>
+                        """ ,
                         },
-                        ],
+            ]
 
         self.__model = genanki.Model(
             1607392319,  # معرف فريد عشوائي
