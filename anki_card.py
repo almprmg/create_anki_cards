@@ -19,7 +19,13 @@ class TextStyle:
     @staticmethod
     def center(text):
 
-        return f'<div style="text-align: center;">{text}</div>
+        return f'<div style="text-align: center;">{text}</div>'
+     
+    @staticmethod
+    def span(text, color = "blue" , font_weight = "bold"):   
+
+
+        return   f"""<span style="color:{color};font-weight:{font_weight}">{text}</span> """
 class AnkiCard:
     def __init__(self,path_word_file,fields , templates,  name ="CSV to Anki Model"):
         self.card_file = self.__read_file(path_word_file)
