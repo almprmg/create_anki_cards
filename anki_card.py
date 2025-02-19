@@ -27,7 +27,7 @@ class TextStyle:
 
         return   f"""<span style="color:{color};font-weight:{font_weight}">{text}</span> """
 class AnkiCard:
-    def __init__(self,path_word_file,fields , templates,  name ="CSV to Anki Model"):
+    def __init__(self,path_word_file,fields , templates,css,  name ="CSV to Anki Model"):
         self.card_file = self.__read_file(path_word_file)
 
         if (fields == None  ):
@@ -56,12 +56,29 @@ class AnkiCard:
                         """ ,
                         },
             ]
+        if (css == None ):     
+          css="""
+                .card {
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                  
+                    padding: 20px;
+                    border-radius: 10px;
+                }
+                h2 {
+                    color: #007bff;
+                }
+                p {
+                    font-size: 18px;
+                }
+             """
 
         self.__model = genanki.Model(
             1607392319,  # معرف فريد عشوائي
             name ,
             fields=fields, 
-            templates= templates 
+            templates= templates ,
+            css= css
         )
         self.__deck  = genanki.Deck(2059400110, name)
     def __read_file(self,path_word_file):
