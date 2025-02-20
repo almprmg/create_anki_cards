@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from gtts import gTTS
-
+from pydub import AudioSegment
+import os
 class TTS(ABC):
     def __init__(self, clint,lang ):
         self.clint: gTTS = clint
@@ -24,5 +25,29 @@ class TTSNormal(TTS):
 
     def speck(self, text):
         self.__tts = self.clint(text,lang = self._lang)
-    
 
+    def save(self, path):
+
+        type_format = [".mp3",".wav"]
+        list_path = os.path.splitext(path)
+        mp3_path = os.path.join(*list_path[:-1],type_format[0]) 
+        wav_path = os.path.join(*list_path[:-1],type_format[1]) 
+
+
+        ext = list_path[-1].lower()
+
+
+        if ext in type_format :
+            
+            self.__tts.save(mp3_path)
+
+            if ext == type_format[1]:
+                audio_segment = AudioSegment.from_mp3(mp3_path)
+                audio_segment.export(wav_path, format="wav")
+             
+            if os.path.exists(mp3_path):
+                os.remove(mp3_path)
+       
+        else:
+            raise FileExistsError(f"{ext} type not defined  , type defined are {type_format} ") 
+        return super().save(path, format)
