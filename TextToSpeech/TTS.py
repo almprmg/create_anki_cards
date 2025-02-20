@@ -12,8 +12,8 @@ class TTS(ABC):
     @abstractmethod
     def save_to_audio(self,path,format):
         if isinstance(self.clint , type):
-            raise NotImplementedError("Redefined method ")
-        raise NotImplementedError("Redefined method ")
+            raise NotImplementedError("clint not defend")
+        raise NotImplementedError("Redefined method  ,")
 
 
 
