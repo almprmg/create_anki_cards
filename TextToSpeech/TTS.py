@@ -18,4 +18,8 @@ class TTS(ABC):
 
 
 
+class TTSNormal(TTS):
+    def __init__(self,lang = 'en'  ):
+        super().__init__(gTTS , lang) 
+
     
