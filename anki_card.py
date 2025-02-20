@@ -4,10 +4,6 @@ import genanki
 from elevenlabs.client import ElevenLabs
 from elevenlabs import  save
 
-import re
-
-
-
 
 
 class TextStyle:
