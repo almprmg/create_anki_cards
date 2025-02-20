@@ -10,9 +10,9 @@ class TTS(ABC):
         raise NotImplementedError("Redefined method")
     
     @abstractmethod
-    def save_to_audio(self,path,format):
+    def save(self,path,format):
         if isinstance(self.clint , type):
-            raise NotImplementedError("clint not defend")
+            raise TypeError("First redefined speck method ")
         raise NotImplementedError("Redefined method  ,")
 
 
@@ -24,5 +24,5 @@ class TTSNormal(TTS):
 
     def speck(self, text):
         self.__tts = self.clint(text,lang = self._lang)
-
+    
 
