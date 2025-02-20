@@ -22,4 +22,7 @@ class TTSNormal(TTS):
     def __init__(self,lang = 'en'  ):
         super().__init__(gTTS , lang) 
 
-    
+    def speck(self, text):
+        self.__tts = self.clint(text,lang = self._lang)
+
+
