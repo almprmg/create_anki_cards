@@ -47,7 +47,7 @@ class TTSNormal(TTS):
              
             if os.path.exists(mp3_path):
                 os.remove(mp3_path)
+            return 1 
        
         else:
             raise FileExistsError(f"{ext} type not defined  , type defined are {type_format} ") 
-        return super().save(path, format)
