@@ -95,8 +95,9 @@ class AnkiCard:
         media_files = []
 
         for index, row in self.card_file.iterrows():
-            question = row["English Word"]
-            answer = row["Example Sentence"]
+            question = row["Word"]
+            answer = row["Answer"]
+            example = row["Example"]
             audio_filename = ""
 
             audio_filename = f"audio_{index}.mp3"
@@ -111,13 +112,13 @@ class AnkiCard:
 
             note = genanki.Note(
                 model=self.__model,
-                fields=[question, answer, audio_tag],
+                fields=[question, answer,example, audio_tag],
             )
             self.__deck.add_note(note)
 
         package = genanki.Package( self.__deck)
         package.media_files = media_files  
-        package.write_to_file("CSV_to_Anki.apkg")
+        package.write_to_file(name_of_apkg)
 
 
     
