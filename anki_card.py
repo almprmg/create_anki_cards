@@ -1,8 +1,8 @@
+import os
 import pandas as pd
 from dotenv import load_dotenv
 import genanki
-from elevenlabs.client import ElevenLabs
-from elevenlabs import  save
+from TTS import TTSNormal
 
 
 
@@ -25,6 +25,10 @@ class TextStyle:
 class AnkiCard:
     def __init__(self,path_word_file,fields , templates,css,  name ="CSV to Anki Model"):
         self.card_file = self.__read_file(path_word_file)
+            
+        self.audio_folder = "audio_files"
+        os.makedirs(self.audio_folder, exist_ok=True)
+
 
         if (fields == None  ):
             fields = [
@@ -70,7 +74,7 @@ class AnkiCard:
              """
 
         self.__model = genanki.Model(
-            1607392319,  # معرف فريد عشوائي
+            1607392319,  
             name ,
             fields=fields, 
             templates= templates ,
@@ -87,37 +91,37 @@ class AnkiCard:
         missing_words = [word for word in  df_text[column_2] if word not in  self.card_file[column_1].values]
         return missing_words
     
-    def create_card(self):
-        card_df =self.card_file.copy()
-        
-        card_df["Back"] = '<div style="text-align: center;"><b>'+ card_df["English Word"]   + "</b></div> " + '<div style="text-align: center;"><b>' +card_df["Arabic Translation"] + "</b></div> "+ """<div style="text-align: center;">  <b><br></b></div><div style="text-align: center;"><span style="text-align: start;">
-                """ + card_df["Example Sentence"] + '</span><b><br></b></div>'
-        card_df["English Word"]  = '<div style="text-align: center;"><b>'+ card_df["English Word"]   + "</b></div> "
-        columns_drop = [column  for column in card_df if (column in  ["English Word","Back"] ) ]
-        card_df.drop(columns_drop,axis= 1,inplace = True)
+    def create(self,name_of_apkg = "CSV_to_Anki.apkg"):
+        media_files = []
 
-        return card_df
+        for index, row in self.card_file.iterrows():
+            question = row["English Word"]
+            answer = row["Example Sentence"]
+            audio_filename = ""
+
+            audio_filename = f"audio_{index}.mp3"
+            audio_path = os.path.join(self.audio_folder, audio_filename)
+
+            tts =TTSNormal()
+            tts.speck(answer)
+            tts.save(audio_path)
+            media_files.append(audio_path)
+            audio_tag = f"[sound:{audio_filename}]"
+  
+
+            note = genanki.Note(
+                model=self.__model,
+                fields=[question, answer, audio_tag],
+            )
+            self.__deck.add_note(note)
+
+        package = genanki.Package( self.__deck)
+        package.media_files = media_files  
+        package.write_to_file("CSV_to_Anki.apkg")
+
 
     
 
-class TextToSpeech:
-
-    def __init__(self):
-        
-        load_dotenv()
-        
-        self.__client = ElevenLabs()
 
 
-    def text_to_speech(self, text, output_file="output.mp3"):
 
-        audio =  self.__client.text_to_speech.convert(
-            text= text,voice_id="21m00Tcm4TlvDq8ikWAM",
-
-                model_id="eleven_multilingual_v2",
-
-        )
-
- 
-        save(audio,output_file)
- 
