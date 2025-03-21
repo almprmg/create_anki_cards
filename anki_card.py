@@ -34,6 +34,7 @@ class AnkiCard:
             fields = [
                 {"name": "Word"},
                 {"name": "Answer"},
+                {"name": "Type"},
                 {"name": "Example"},
                 {"name": "Audio"},
             ],
@@ -49,12 +50,20 @@ class AnkiCard:
                           <div class="card"> 
                             <h2>{{Word}}</h2>
                             <hr>
+                            <p> {{Type}}  <br>  <br>  </p>
                             <p> {{Answer}}  <br>  <br>  </p>
                             <p> {{Example}}<br> </p>
                             {{Audio}} 
                           </div>
                         """ ,
                         },
+
+
+        # {
+        #     'name': 'Example Card',
+        #     'qfmt': '{{Audio}}<br><br><i>{{Example}}</i>',
+        #     'afmt': '{{FrontSide}}<hr id="answer"><b>{{Answer}}</b>',
+        # },
             ]
         if (css == None ):     
           css="""
@@ -98,6 +107,8 @@ class AnkiCard:
             question = row["Word"]
             answer = row["Answer"]
             example = row["Example"]
+            type = row["Type"]
+            tags = row["tags"]
             audio_filename = ""
 
             audio_filename = f"audio_{index}.mp3"
@@ -112,7 +123,8 @@ class AnkiCard:
 
             note = genanki.Note(
                 model=self.__model,
-                fields=[question, answer,example, audio_tag],
+                fields=[question, answer,type,example, audio_tag],
+                tags = ",".join(tags)
             )
             self.__deck.add_note(note)
 
