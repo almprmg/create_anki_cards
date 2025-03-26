@@ -1,28 +1,12 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from werkzeug.security import check_password_hash
 from .models import User
-from .utils import generate_token
+from .utils import generate_token , record_failed_attempt
+from .utils import check_login_attempts ,admin_required , redis_client
 from .database import db_session as db
 
 auth_blueprint = Blueprint('auth', __name__)
-
-SECRET_KEY = "your_secret_key"
-
-@auth_blueprint.route("/login", methods=["POST"])
-def login():
-    data = request.get_json()
-    username = data["username"]
-    password = data["password"]
-    
-    user = db_session.query(User).filter_by(username=username).first()
-    
-    if user and check_password_hash(user.password, password):
-        token = generate_token(user)
-        return jsonify({"token": token}), 200
-    return jsonify({"message": "Invalid credentials"}), 401
-
 
 
 
@@ -47,16 +31,28 @@ def register():
 
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
-    data = request.json
-    user = User.query.filter_by(email=data["email"]).first()
+    data = request.get_json()
+    username = data["username"]
+    password = data["password"]
 
-    if not user or not user.check_password(data["password"]):
-        return jsonify({"error": "Invalid credentials"}), 401
+    if not check_login_attempts(username):
+        return jsonify({"message": "Too many failed attempts. Try again later."}), 403
 
-    access_token = create_access_token(identity={"id": user.id, "role": user.role})
-    return jsonify(access_token=access_token), 200
+    user = User.query.filter_by(username=username).first()
+    if not user or not user.check_password(password):
+        record_failed_attempt(username)
+        return jsonify({"message": "Invalid credentials"}), 401
 
+    token = generate_token(user)
+    return jsonify({"token": token}), 200
 
+@auth_blueprint.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    current_user = get_jwt_identity()
+    key = f"auth_token:{current_user['username']}"
+    redis_client.delete(key)
+    return jsonify({"message": "Logged out successfully"}), 200
 @auth_blueprint.route("/protected", methods=["GET"])
 @jwt_required()
 def protected():
@@ -64,3 +60,8 @@ def protected():
     return jsonify(logged_in_as=current_user), 200
 
 
+@auth_blueprint.route("/admin/users", methods=["GET"])
+@admin_required
+def get_all_users():
+    users = User.query.all()
+    return jsonify([{"id": user.id, "username": user.username, "role": user.role} for user in users])
