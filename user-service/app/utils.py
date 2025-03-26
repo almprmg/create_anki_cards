@@ -4,12 +4,17 @@ from .config import Config
 from functools import wraps
 from flask import request, jsonify
 from flask_jwt_extended import get_jwt_identity
+
+import os
 import redis
 
 
 
-redis_client = redis.StrictRedis(host="localhost", port=6379, db=0)
-
+redis_client = redis.StrictRedis(
+    host=os.getenv("REDIS_HOST", "localhost"),
+    port=int(os.getenv("REDIS_PORT", 6379)),
+    db=0
+)
 
 def generate_token(user):
     payload = {
