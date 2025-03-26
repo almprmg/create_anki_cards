@@ -7,7 +7,7 @@ from .routes import user_blueprint
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-
+    
     init_db(app)
 
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
