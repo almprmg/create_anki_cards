@@ -8,7 +8,7 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: user-service_user-service
+      app: user-service
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: user-service:latest
+          image: user-service_user-service:latest
           ports:
             - containerPort: 5000
           envFrom:
