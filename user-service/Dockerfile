@@ -16,3 +16,5 @@ RUN pip install --no-cache-dir --requirement /app/requirements.txt --verbose
 COPY . /app
 
 EXPOSE 5000
+
+CMD ["python", "run.py"]

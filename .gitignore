@@ -4,3 +4,4 @@ anki_card_test.ipynb
 word.txt
 new_word.csv
 test_english_word.csv
+*.pyc

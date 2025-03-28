@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: user-service_user-service:latest
+          image: 42f37b8f7e3c:latest
           ports:
             - containerPort: 5000
           envFrom:

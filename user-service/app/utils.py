@@ -22,7 +22,8 @@ def generate_token(user):
         "role": user.role,
         "exp": datetime.utcnow() + timedelta(hours=1)
     }
-    return jwt.encode(payload, Config.SECRET_KEY, algorithm="HS256")
+    return jwt.encode(payload, os.environ.get("JWT_SECRET"), algorithm="HS256")
+
 
 
 def admin_required(f):

@@ -1,9 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
+from flask_mysqldb import MySQL
 
-
-
-
-db_session = SQLAlchemy()
+db_session = MySQL()
 
 def init_db(app):
     db_session.init_app(app)
