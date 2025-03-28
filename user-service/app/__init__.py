@@ -10,11 +10,11 @@ def create_app():
     server.config.from_object(Config)
     
     init_db(server)
-    server.config["MYSQL_HOST"] = os.environ.get("MYSQL_HOST")
-    server.config["MYSQL_USER"] = os.environ.get("MYSQL_USER")
-    server.config["MYSQL_PASSWORD"] = os.environ.get("MYSQL_PASSWORD")
-    server.config["MYSQL_DB"] = os.environ.get("MYSQL_DB")
-    server.config["MYSQL_PORT"] = int(os.environ.get("MYSQL_PORT"))
+    server.config["POSTGERS_HOST"] = os.environ.get("POSTGERS_HOST")
+    server.config["POSTGERS_USER"] = os.environ.get("POSTGERS_USER")
+    server.config["POSTGERS_PASSWORD"] = os.environ.get("POSTGERS_PASSWORD")
+    server.config["POSTGERS_DB"] = os.environ.get("POSTGERS_DB")
+    server.config["POSTGERS_PORT"] = int(os.environ.get("POSTGERS_PORT"))
 
     server.register_blueprint(auth_blueprint, url_prefix='/auth')
 
