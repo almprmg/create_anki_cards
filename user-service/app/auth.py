@@ -1,5 +1,6 @@
-import jwt, os
+
 from flask import Blueprint, request, jsonify
+
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from .models import User
 from .utils import generate_token , record_failed_attempt
@@ -51,24 +52,6 @@ def login():
     token = generate_token(user)
     return jsonify({"token": token}), 200
 
-
-@auth_blueprint.route("/validate", methods=["POST"])
-def validate():
-    encoded_jwt = request.headers["Authorization"]
-
-    if not encoded_jwt:
-        return "missing credentials", 401
-
-    encoded_jwt = encoded_jwt.split(" ")[1]
-
-    try:
-        decoded = jwt.decode(
-            encoded_jwt, os.environ.get("JWT_SECRET"), algorithms=["HS256"]
-        )
-    except:
-        return "not authorized", 403
-
-    return decoded, 200
 
 
 

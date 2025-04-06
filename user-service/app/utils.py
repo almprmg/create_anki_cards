@@ -1,9 +1,9 @@
-import jwt
-from datetime import datetime, timedelta
+
 from .config import Config
 from functools import wraps
 from flask import request, jsonify
-from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt_identity , create_access_token
+from flask import jsonify
 
 import os
 import redis
@@ -16,13 +16,20 @@ redis_client = redis.StrictRedis(
     db=0
 )
 
+
+
+def create_response(message, status_code, data=None):
+    response = {"message": message}
+    if data:
+        response["data"] = data
+    return jsonify(response), status_code
 def generate_token(user):
     payload = {
         "username": user.username,
         "role": user.role,
-        "exp": datetime.utcnow() + timedelta(hours=1)
+       
     }
-    return jwt.encode(payload, os.environ.get("JWT_SECRET"), algorithm="HS256")
+    return create_access_token(identity=payload)   
 
 
 
