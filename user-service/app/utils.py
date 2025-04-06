@@ -61,11 +61,11 @@ def record_failed_attempt(username):
         redis_client.expire(key, Config.LOCKOUT_TIME)
 
 
-def verify_token(token):
-    decoded = jwt.decode(token, Config.SECRET_KEY, algorithms=["HS256"])
-    username = decoded["username"]
-    key = f"auth_token:{username}"
-    stored_token = redis_client.get(key)
-    if stored_token and stored_token.decode() == token:
-        return decoded
-    return None
+# def verify_token(token):
+#     decoded = jwt.decode(token, Config.SECRET_KEY, algorithms=["HS256"])
+#     username = decoded["username"]
+#     key = f"auth_token:{username}"
+#     stored_token = redis_client.get(key)
+#     if stored_token and stored_token.decode() == token:
+#         return decoded
+#     return None
