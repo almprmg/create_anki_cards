@@ -17,7 +17,7 @@ auth_blueprint = Blueprint('auth', __name__)
 @auth_blueprint.route("/register", methods=["POST"])
 def register():
     data = request.json
-    role = data.get("role", "user")  
+    role = data["role"] =  "user"  
     if User.query.filter_by(email=data["email"]).first():
         return jsonify({"error": "User already exists"}), 400
 
