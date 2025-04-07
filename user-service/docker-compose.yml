@@ -13,7 +13,7 @@ services:
       - FLASK_ENV=development
       - REDIS_HOST=redis  # إضافة متغير البيئة لعنوان Redis
       - REDIS_PORT=6379   # إضافة متغير البيئة لمنفذ Redis
-      - DB_URL=mysql+pymysql://root:rootpassword@db:3306/mydatabase
+      - DB_URL=postgresql://postgres:postgres@db:5432/postgres
     volumes:
       - .:/app
 
@@ -25,17 +25,16 @@ services:
 
 
   db:
-    container_name: mysql_db
-    image: mysql:8.0
+    container_name: user-service
+    image: postgres:13
     ports:
-      - "3306:3306"
+      - "5432:5432"
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword
-      - MYSQL_DATABASE=mydatabase
-      - MYSQL_USER=myuser
-      - MYSQL_PASSWORD=mypassword
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
     volumes:
-      - mysql_data:/var/lib/mysql
+      - pgdata:/var/lib/postgresql/data
 
 
   redis:

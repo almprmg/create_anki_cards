@@ -16,7 +16,7 @@ server.config['JWT_SECRET_KEY'] = os.environ.get("JWT_SECRET")
 server.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 server.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=7)
 jwt = JWTManager(server)
-server.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:rootpassword@localhost:3306/mydatabase"#osenviron.get("DB_URL")
+server.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:postgres@localhost:5432/postgres"#osenviron.get("DB_URL")
 
 
 
