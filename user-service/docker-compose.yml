@@ -38,7 +38,7 @@ services:
 
 
   redis:
-    container_name: user-service
+
     image: redis:6.2  # استخدام صورة Redis
     ports:
       - "6379:6379"  # تعيين منفذ Redis

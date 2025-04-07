@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from .models import User
-from .utils import generate_token , record_failed_attempt
+from .utils import generate_token , record_failed_attempt ,store_token
 from .utils import check_login_attempts ,admin_required , redis_client
 from .database import db_session as db
 
@@ -50,6 +50,9 @@ def login():
         return jsonify({"message": "Invalid credentials"}), 401
 
     token = generate_token(user)
+
+       # Store the token in Redis
+    store_token(username, token)
     return jsonify({"token": token}), 200
 
 
@@ -71,6 +74,7 @@ def protected():
 
 
 @auth_blueprint.route("/admin/users", methods=["GET"])
+@jwt_required()
 @admin_required
 def get_all_users():
     users = User.query.all()
