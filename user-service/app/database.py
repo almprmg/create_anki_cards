@@ -7,3 +7,9 @@ def init_db(app):
 
 
 
+
+    with app.app_context():
+        db_session.create_all()  # This creates all tables defined in your models
+
+
+

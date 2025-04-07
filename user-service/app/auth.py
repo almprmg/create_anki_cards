@@ -62,9 +62,8 @@ def logout():
     key = f"auth_token:{current_user['username']}"
     redis_client.delete(key)
     return jsonify({"message": "Logged out successfully"}), 200
+
 @auth_blueprint.route("/protected", methods=["GET"])
-
-
 @jwt_required()
 def protected():
     current_user = get_jwt_identity()
