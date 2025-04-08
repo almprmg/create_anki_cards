@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify, g, abort, current_app
 from app.core.card_services import CardService
 from app.api.auth import jwt_required
 from app.core.exceptions import DeckNotFound, CardNotFound, NotAuthorizedError, ValidationError
+from app.infrastructure.messaging.ai_queue import ConnectionError as RedisConnectionError
+
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -154,4 +156,47 @@ def delete_card_endpoint(deck_id, card_id):
         abort(500, description="Database error occurred.")
     except Exception as e:
         current_app.logger.error(f"Unexpected error deleting card {card_id} from deck {deck_id}: {e}")
+        abort(500, description="An unexpected error occurred.")
+
+
+@cards_bp.route('/decks/<int:deck_id>/cards/generate', methods=['POST'])
+@jwt_required
+def request_ai_generation_endpoint(deck_id):
+    user_id = g.user_id
+    role = g.role
+    data = request.get_json()
+
+    if not data:
+        abort(400, description="Request body required for AI generation.")
+
+    generation_params = {
+        "topic": data.get("topic"),
+        "num_cards": data.get("num_cards", 5), # استخدام قيمة افتراضية
+        "options": data.get("options", {}) # أي خيارات إضافية
+    }
+
+    try:
+        card_service.request_ai_card_generation(
+            deck_id=deck_id,
+            user_id=user_id,
+            role=role,
+            generation_params=generation_params
+        )
+
+        return jsonify({"message": "Card generation request accepted and queued."}), 202
+
+    except (DeckNotFound, NotAuthorizedError, ValidationError) as e:
+
+        abort(e.status_code, description=str(e))
+    except RedisConnectionError as e:
+
+         current_app.logger.error(f"AI request queueing failed for deck {deck_id}: {e}")
+         abort(503, description="Service unavailable: Could not queue generation request.") # 503 Service Unavailable
+    except RuntimeError as e:
+
+         current_app.logger.error(f"AI request queueing failed unexpectedly for deck {deck_id}: {e}")
+         abort(500, description="Failed to process AI generation request.")
+    except Exception as e:
+  
+        current_app.logger.error(f"Unexpected error during AI generation request for deck {deck_id}: {e}")
         abort(500, description="An unexpected error occurred.")

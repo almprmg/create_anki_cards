@@ -10,10 +10,13 @@ class Config:
     DEBUG = False
     TESTING = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    # تعطيل تتبع تعديلات SQLAlchemy لتحسين الأداء
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    # المفتاح المستخدم لفك تشفير JWT
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+    REDIS_AI_REQUEST_CHANNEL = os.environ.get('REDIS_AI_REQUEST_CHANNEL', 'ai_generation_requests')
+    REDIS_AI_RESULT_CHANNEL = os.environ.get('REDIS_AI_RESULT_CHANNEL', 'ai_generation_results')
+    
 
 class DevelopmentConfig(Config):
     """Development configuration."""

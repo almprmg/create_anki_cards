@@ -1,8 +1,9 @@
 # app/core/card_services.py
 from app.models.card import Card
 from app.infrastructure.repositories.card_repository import CardRepository
-# سنحتاج خدمة الباقات للتحقق من وجود الباقة وصلاحية المستخدم عليها
+
 from app.core.deck_services import DeckService
+from app.infrastructure.messaging.ai_queue import publish_generation_request, ConnectionError as RedisConnectionError
 from .exceptions import DeckNotFound, CardNotFound, NotAuthorizedError, ValidationError
 
 class CardService:
@@ -106,3 +107,43 @@ class CardService:
         card_to_delete = self.get_card_by_id(card_id, deck_id, user_id, role)
 
         self.card_repository.delete(card_to_delete)
+    def request_ai_card_generation(self, deck_id: int, user_id: int, role: str, generation_params: dict) -> None:
+        """طلب توليد بطاقات باستخدام AI Service عبر Redis."""
+        # 1. التحقق من وجود الباقة وصلاحية المستخدم عليها
+        try:
+            # يكفي التأكد من أن المستخدم يمكنه الوصول إلى الباقة
+            self.deck_service.get_deck_by_id_for_user(deck_id, user_id, role)
+        except DeckNotFound:
+            raise DeckNotFound(f"Cannot request AI generation. Deck with ID {deck_id} not found.")
+        except NotAuthorizedError:
+            raise NotAuthorizedError(f"You are not authorized to modify deck {deck_id}.")
+
+        # 2. التحقق من معايير التوليد (مثال بسيط)
+        topic = generation_params.get('topic')
+        num_cards = generation_params.get('num_cards', 5) # عدد افتراضي 5
+        if not topic or len(topic.strip()) == 0:
+            raise ValidationError("Generation topic cannot be empty.")
+        if not isinstance(num_cards, int) or num_cards <= 0 or num_cards > 20: # تحديد حد أقصى
+             raise ValidationError("Number of cards must be a positive integer (max 20).")
+
+        # 3. بناء رسالة الطلب
+        message_payload = {
+            "deck_id": deck_id,
+            "user_id": user_id, # قد تحتاج AI Service لمعرفة من طلب التوليد
+            "topic": topic.strip(),
+            "num_cards": num_cards,
+            # يمكن إضافة معايير أخرى مثل مستوى الصعوبة، اللغة، إلخ.
+            "generation_options": generation_params.get("options", {})
+        }
+
+        # 4. نشر الرسالة إلى Redis
+        try:
+            publish_generation_request(message_payload)
+            # لا يوجد شيء لإرجاعه هنا لأن العملية غير متزامنة
+        except RedisConnectionError as e:
+             # التعامل مع خطأ اتصال Redis - قد تحتاج لإعادة المحاولة أو تسجيل الخطأ
+             # أو إرجاع خطأ 503 Service Unavailable للمستخدم
+             raise ConnectionError(f"Could not queue AI request due to messaging system issue: {e}")
+        except Exception as e:
+            # التعامل مع أخطاء النشر الأخرى
+            raise RuntimeError(f"Failed to queue AI request: {e}")
