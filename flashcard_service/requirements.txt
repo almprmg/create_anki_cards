@@ -1,0 +1,9 @@
+# requirements.txt
+
+Flask>=2.0
+SQLAlchemy>=1.4
+psycopg2-binary>=2.9 # أو psycopg2 إذا كنت تفضل التثبيت اليدوي
+python-dotenv>=0.19
+PyJWT>=2.0 # لفك تشفير JWT
+gunicorn>=20.1 # لخادم WSGI في الإنتاج (أو عند التشغيل بـ Docker)
+alembic>=1.7 # لإدارة Migrations (سنحتاجه لاحقاً)
