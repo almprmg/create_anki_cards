@@ -1,4 +1,4 @@
-# app/__init__.py
+
 from flask import Flask
 from app.config import app_config
 from app.infrastructure.database import db_session, shutdown_session, init_db
@@ -24,10 +24,12 @@ def create_app(config_name=None):
         shutdown_session(exception)
 
     # --- تسجيل الـ Blueprints ---
-    from .api.decks import decks_bp 
+    from .api.decks import decks_bp
+    from .api.cards import cards_bp 
+
     app.register_blueprint(decks_bp, url_prefix='/api/v1') 
 
-  # (We'll record other Blueprints here later, like cards_bp)
+    app.register_blueprint(cards_bp, url_prefix='/api/v1')
 
 # --- Other settings (like CORS, Logging) will added here ---
 
