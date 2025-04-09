@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from .models import User
-from .utils import generate_token , record_failed_attempt ,store_token
+from .utils import generate_token , record_failed_attempt ,store_token,verify_token
 from .utils import check_login_attempts ,admin_required , redis_client
 from .database import db_session as db
 
@@ -66,10 +66,13 @@ def logout():
     redis_client.delete(key)
     return jsonify({"message": "Logged out successfully"}), 200
 
-@auth_blueprint.route("/protected", methods=["GET"])
+@auth_blueprint.route("/validation", methods=["GET"])
 @jwt_required()
-def protected():
-    current_user = get_jwt_identity()
+def validation():
+
+    current_user = verify_token()
+    if not current_user:
+        return jsonify({"message": "Token is invalid or expired"}), 401
     return jsonify(logged_in_as=current_user), 200
 
 

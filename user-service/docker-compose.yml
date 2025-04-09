@@ -3,7 +3,6 @@ version: '3.8'
 services:
   user-service:
     container_name: user-service
-    image: dockerhub-flask_live_app:1.0.0
     build: .
     command:  [ "flask", "run", "--host=0.0.0.0", "--port=5000"]
     ports:
@@ -11,6 +10,7 @@ services:
     environment:
       - FLASK_APP=run.py
       - FLASK_ENV=development
+      - JWT_SECRET_KEY
       - REDIS_HOST=redis  # إضافة متغير البيئة لعنوان Redis
       - REDIS_PORT=6379   # إضافة متغير البيئة لمنفذ Redis
       - DB_URL=postgresql://postgres:postgres@db:5432/postgres

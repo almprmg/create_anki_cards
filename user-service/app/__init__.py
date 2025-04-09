@@ -17,6 +17,7 @@ server.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 server.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=7)
 server.config['JWT_VERIFY_SUB'] = False
 jwt = JWTManager(server)
+
 server.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DB_URL")
 
 
