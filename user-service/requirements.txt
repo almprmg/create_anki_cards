@@ -1,7 +1,0 @@
-Flask
-Flask-SQLAlchemy
-Flask-JWT-Extended
-python-dotenv
-pymysql
-Werkzeug
-redis==4.5.0
